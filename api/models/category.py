@@ -7,7 +7,7 @@ class Category(db.Model):
     categoria_id = db.Column(db.Integer, primary_key=True)
     categoria_descripcion = db.Column(db.String(100))
     categoria_estado = db.Column(db.Integer)
-    items = db.relationship("Item", secondary=ItemCategory.__table__, back_populates="categoria")
+    items = db.relationship("ItemCategory",  back_populates="categoria")
 
     def __init__(self, categoria_descripcion, categoria_estado):
         self.categoria_descripcion = categoria_descripcion

@@ -2,8 +2,7 @@ from sqlalchemy.orm import joinedload
 
 from api import db
 from api.models.item_category import ItemCategory
-from api.models.provider import Provider
-from api.models.category import Category
+
 
 
 class Item(db.Model):
@@ -14,7 +13,7 @@ class Item(db.Model):
     articulo_precio = db.Column(db.Float)
     articulo_proveedor = db.Column(db.Integer, db.ForeignKey('proveedor.proveedor_id'))
     proveedor = db.relationship('Provider', back_populates='items')
-    categoria = db.relationship("Category", secondary=ItemCategory.__table__, back_populates="items")
+    categoria = db.relationship('ItemCategory', back_populates="items")
 
     def __init__(self, articulo_cod03, articulo_descripcion, articulo_precio, articulo_proveedor):
         self.articulo_cod03 = articulo_cod03
@@ -23,7 +22,7 @@ class Item(db.Model):
         self.articulo_proveedor = articulo_proveedor
 
     def __repr__(self):
-        return '<articulo_id {}>'.format(self.articulo_id)
+        return '<articulo_id {} articulo_descripcion {}>'.format(self.articulo_id, self.articulo_descripcion)
 
     def serialize(self):
         return {
@@ -46,3 +45,12 @@ class Item(db.Model):
     @staticmethod
     def get_all():
         return db.session.query(Item).all()
+
+    @staticmethod
+    def filter_by_category_or_provider(categoria_id, proveedor_id):
+        return db.session.query(Item).join(ItemCategory).filter(ItemCategory.categoria_id == categoria_id,
+                                                                Item.articulo_proveedor == proveedor_id).all()
+
+    @staticmethod
+    def filter_by_name(articulo_descripcion):
+        return db.session.query(Item).filter(Item.articulo_descripcion.like('%' + articulo_descripcion + '%')).all()

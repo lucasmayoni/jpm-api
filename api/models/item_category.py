@@ -8,6 +8,9 @@ class ItemCategory(db.Model):
     categoria_id = db.Column(db.Integer, db.ForeignKey('categoria.categoria_id'))
     categoria_orden = db.Column(db.Integer)
 
+    items = db.relationship("Item", back_populates="categoria")
+    categoria = db.relationship("Category", back_populates="items")
+
     def __init__(self, articulo_id, categoria_id, categoria_orden):
         self.articulo_id = articulo_id
         self.categoria_id = categoria_id
